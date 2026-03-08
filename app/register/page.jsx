@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { authService } from '../../services/authService';
+import { authService } from '../services/authService';
 
 export default function RegisterPage() {
     const [formData, setFormData] = useState({ username: '', email: '', password: '' });

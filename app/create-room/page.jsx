@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { roomService } from '../../services/roomService';
-import { useAuthStore } from '../../store/authStore';
+import { roomService } from '../services/roomService';
+import { useAuthStore } from '../store/authStore';
 
 const TOPIC_SUGGESTIONS = [
     "Is water wet?",
@@ -79,8 +79,8 @@ export default function CreateRoomPage() {
                         <label className="block text-sm font-medium text-gray-300 mb-3">Game Mode</label>
                         <div className="grid grid-cols-2 gap-4">
                             <label className={`cursor-pointer border rounded-xl p-4 transition-all ${formData.mode === 'debate'
-                                    ? 'bg-blue-900/20 border-blue-500 ring-1 ring-blue-500'
-                                    : 'bg-dark-200 border-white/10 hover:border-white/20'
+                                ? 'bg-blue-900/20 border-blue-500 ring-1 ring-blue-500'
+                                : 'bg-dark-200 border-white/10 hover:border-white/20'
                                 }`}>
                                 <input
                                     type="radio"
@@ -96,8 +96,8 @@ export default function CreateRoomPage() {
                             </label>
 
                             <label className={`cursor-pointer border rounded-xl p-4 transition-all ${formData.mode === 'roast'
-                                    ? 'bg-orange-900/20 border-orange-500 ring-1 ring-orange-500'
-                                    : 'bg-dark-200 border-white/10 hover:border-white/20'
+                                ? 'bg-orange-900/20 border-orange-500 ring-1 ring-orange-500'
+                                : 'bg-dark-200 border-white/10 hover:border-white/20'
                                 }`}>
                                 <input
                                     type="radio"

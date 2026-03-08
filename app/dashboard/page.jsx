@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useAuthStore } from '../../store/authStore';
-import { userService } from '../../services/roomService';
+import { useAuthStore } from '../store/authStore';
+import { userService } from '../services/roomService';
 import toast from 'react-hot-toast';
 
 const XPProgressBar = ({ xp, level }) => {

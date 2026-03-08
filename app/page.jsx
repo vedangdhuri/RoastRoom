@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from './store/authStore';
 
 const LandingPage = () => {
     const { user } = useAuthStore();

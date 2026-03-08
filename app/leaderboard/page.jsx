@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { userService } from '../../services/roomService';
-import { useAuthStore } from '../../store/authStore';
+import { userService } from '../services/roomService';
+import { useAuthStore } from '../store/authStore';
 
 const BADGE_EMOJI = {
     first_win: '🥇', five_wins: '⭐', ten_wins: '🏆',

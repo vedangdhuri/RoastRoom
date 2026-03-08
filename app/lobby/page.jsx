@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { roomService } from '../../services/roomService';
+import { roomService } from '../services/roomService';
 import toast from 'react-hot-toast';
 
 const LobbyPage = () => {
@@ -94,8 +94,8 @@ const LobbyPage = () => {
                                     onClick={() => handleJoin(room.roomId)}
                                     disabled={isFull && room.status !== 'active'}
                                     className={`w-full py-2.5 rounded-lg font-semibold text-sm transition-colors ${isFull
-                                            ? 'bg-surface-100 hover:bg-surface-200 text-gray-300'
-                                            : 'bg-brand-600/20 hover:bg-brand-600 text-brand-400 hover:text-white border border-brand-500/30'
+                                        ? 'bg-surface-100 hover:bg-surface-200 text-gray-300'
+                                        : 'bg-brand-600/20 hover:bg-brand-600 text-brand-400 hover:text-white border border-brand-500/30'
                                         }`}
                                 >
                                     {isFinished ? 'View Results' : isFull ? 'Spectate' : 'Join Match'}

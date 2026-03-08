@@ -4,11 +4,11 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { useAuthStore } from '../../../store/authStore';
-import { useRoomStore } from '../../../store/roomStore';
-import { useGameStore } from '../../../store/gameStore';
-import { getSocket } from '../../../socket/socket';
-import { roomService } from '../../../services/roomService';
+import { useAuthStore } from '../../store/authStore';
+import { useRoomStore } from '../../store/roomStore';
+import { useGameStore } from '../../store/gameStore';
+import { getSocket } from '../../socket/socket';
+import { roomService } from '../../services/roomService';
 
 // ── Sub-components ────────────────────────────────────────────────
 const RoundTimer = ({ timeLeft, maxTime }) => {
@@ -56,12 +56,12 @@ const ChatMessage = ({ msg, myId }) => {
                 <span className="text-xs text-gray-500">{msg.username}</span>
                 <div
                     className={`px-3 py-2 rounded-xl text-sm ${msg.isArgument
-                            ? isMe
-                                ? 'bg-brand-600 text-white border border-brand-500'
-                                : 'bg-blue-900/50 text-blue-100 border border-blue-700/30'
-                            : isMe
-                                ? 'bg-surface-100 text-gray-200'
-                                : 'bg-dark-200 text-gray-300'
+                        ? isMe
+                            ? 'bg-brand-600 text-white border border-brand-500'
+                            : 'bg-blue-900/50 text-blue-100 border border-blue-700/30'
+                        : isMe
+                            ? 'bg-surface-100 text-gray-200'
+                            : 'bg-dark-200 text-gray-300'
                         }`}
                 >
                     {msg.isArgument && (
