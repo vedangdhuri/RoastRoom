@@ -4,6 +4,8 @@ export const roomService = {
   createRoom: (data) => api.post("/rooms", data).then((r) => r.data),
   getRooms: () => api.get("/rooms").then((r) => r.data),
   getRoomById: (roomId) => api.get(`/rooms/${roomId}`).then((r) => r.data),
+  suggestTopic: (mode) =>
+    api.get(`/rooms/suggest-topic?mode=${mode}`).then((r) => r.data.topic),
 };
 
 export const userService = {
