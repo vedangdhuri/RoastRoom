@@ -9,6 +9,9 @@ import { useRoomStore } from '../../store/roomStore';
 import { useGameStore } from '../../store/gameStore';
 import { getSocket } from '../../socket/socket';
 import { roomService } from '../../services/roomService';
+import ReactionRenderer, { ReactionBar } from '../../components/ReactionRenderer';
+import AudienceVoting from '../../components/AudienceVoting';
+import HighlightExport from '../../components/HighlightExport';
 
 // ── Sub-components ────────────────────────────────────────────────
 const RoundTimer = ({ timeLeft, maxTime }) => {
@@ -118,14 +121,15 @@ const ScoreCard = ({ scoreData, onClose }) => {
     );
 };
 
-const MatchResult = ({ result, myId, onLeave }) => {
+const MatchResult = ({ result, myId, onLeave, topic, mode }) => {
     const isWinner = result.winner?.userId === myId;
+    const isSpectator = !result.finalScores?.some((s) => s.userId === myId);
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md overflow-y-auto">
             <motion.div
                 initial={{ scale: 0.7, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                className="card max-w-md w-full text-center"
+                className="card max-w-md w-full text-center my-8"
             >
                 <motion.div
                     initial={{ scale: 0 }}
@@ -133,14 +137,29 @@ const MatchResult = ({ result, myId, onLeave }) => {
                     transition={{ type: 'spring', delay: 0.2 }}
                     className="text-6xl mb-4"
                 >
-                    {isWinner ? '🏆' : '💀'}
+                    {isSpectator ? '👀' : isWinner ? '🏆' : '💀'}
                 </motion.div>
                 <h2 className="font-display font-bold text-3xl mb-1">
-                    {isWinner ? 'You Won!' : 'You Lost!'}
+                    {isSpectator ? 'Match Over!' : isWinner ? 'You Won!' : 'You Lost!'}
                 </h2>
-                <p className="text-gray-400 mb-6">
+                <p className="text-gray-400 mb-4">
                     Winner: <span className="font-semibold text-white">{result.winner?.username}</span>
                 </p>
+
+                {/* People's Champ */}
+                {result.peoplesChamp && result.crowdWinner && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 }}
+                        className="mb-4 py-2 px-4 rounded-xl bg-purple-500/10 border border-purple-500/30"
+                    >
+                        <p className="text-sm text-purple-300">
+                            🏅 <span className="font-bold text-purple-200">{result.crowdWinner.username}</span> is the People's Champ!
+                        </p>
+                        <p className="text-xs text-purple-400/70 mt-0.5">The audience disagreed with the AI judge</p>
+                    </motion.div>
+                )}
 
                 <div className="space-y-3 mb-6">
                     {result.finalScores?.map((s) => (
@@ -152,6 +171,11 @@ const MatchResult = ({ result, myId, onLeave }) => {
                             </div>
                         </div>
                     ))}
+                </div>
+
+                {/* Highlight Export */}
+                <div className="mb-4">
+                    <HighlightExport matchResult={result} topic={topic} mode={mode} />
                 </div>
 
                 <button onClick={onLeave} className="btn-primary w-full">
@@ -167,7 +191,7 @@ export default function GameRoomPage() {
     const { roomId } = useParams();
     const router = useRouter();
     const { user } = useAuthStore();
-    const { currentRoom, messages, players, addMessage, setCurrentRoom, setPlayers, clearRoom } = useRoomStore();
+    const { currentRoom, messages, players, addMessage, setCurrentRoom, setPlayers, clearRoom, isSpectator, setIsSpectator, spectators, setSpectators } = useRoomStore();
     const { gameStatus, currentRound, maxRounds, topic, mode, currentTurn, timeLeft, isScoring, matchResult,
         initGame, setRound, setTimeLeft, setCurrentTurn, addRoundScore, setIsScoring, setMatchResult, resetGame } = useGameStore();
 
@@ -207,6 +231,17 @@ export default function GameRoomPage() {
             'joined-room': ({ room }) => {
                 setCurrentRoom(room);
                 setPlayers(room.players || []);
+                setSpectators(room.spectators || []);
+            },
+            'joined-as-spectator': ({ room }) => {
+                setCurrentRoom(room);
+                setPlayers(room.players || []);
+                setSpectators(room.spectators || []);
+                setIsSpectator(true);
+                toast('👀 Joined as spectator', { icon: '🎬' });
+            },
+            'spectator-joined': ({ username }) => {
+                addMessage({ id: Date.now(), userId: 'system', username: 'System', message: `${username} is now spectating.`, isArgument: false });
             },
             'player-joined': ({ players: p }) => setPlayers(p),
             'player-left': ({ players: p, username }) => {
@@ -307,7 +342,7 @@ export default function GameRoomPage() {
 
             {/* Match result overlay */}
             {matchResult && (
-                <MatchResult result={matchResult} myId={user?._id} onLeave={handleLeave} />
+                <MatchResult result={matchResult} myId={user?._id} onLeave={handleLeave} topic={topic || currentRoom?.topic} mode={mode} />
             )}
 
             {/* Header */}
@@ -373,32 +408,38 @@ export default function GameRoomPage() {
                         <div ref={chatEndRef} />
                     </div>
 
-                    {/* Input */}
-                    <div className="p-3 border-t border-white/10 space-y-2">
-                        <div className="flex gap-2">
-                            <input
-                                value={inputMsg}
-                                onChange={(e) => { setInputMsg(e.target.value); handleTyping(); }}
-                                onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage(false)}
-                                placeholder={gameStatus === 'active' ? 'Chat with your opponent...' : 'Waiting for game to start...'}
-                                disabled={gameStatus === 'idle'}
-                                maxLength={1000}
-                                className="input flex-1"
-                            />
-                            <button onClick={() => sendMessage(false)} disabled={!inputMsg.trim() || gameStatus === 'idle'} className="btn-secondary px-3">
-                                💬
-                            </button>
+                    {/* Input — different for spectators vs players */}
+                    {isSpectator ? (
+                        <div className="p-3 border-t border-white/10">
+                            <ReactionBar roomId={roomId} disabled={gameStatus !== 'active'} />
                         </div>
-                        {gameStatus === 'active' && (
-                            <button
-                                onClick={() => sendMessage(true)}
-                                disabled={!inputMsg.trim() || !isMyTurn || isScoring}
-                                className="btn-primary w-full text-sm"
-                            >
-                                {!isMyTurn ? "⏸ Opponent's Turn" : isScoring ? '🤖 AI Scoring...' : '⚔️ Submit as Argument'}
-                            </button>
-                        )}
-                    </div>
+                    ) : (
+                        <div className="p-3 border-t border-white/10 space-y-2">
+                            <div className="flex gap-2">
+                                <input
+                                    value={inputMsg}
+                                    onChange={(e) => { setInputMsg(e.target.value); handleTyping(); }}
+                                    onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage(false)}
+                                    placeholder={gameStatus === 'active' ? 'Chat with your opponent...' : 'Waiting for game to start...'}
+                                    disabled={gameStatus === 'idle'}
+                                    maxLength={1000}
+                                    className="input flex-1"
+                                />
+                                <button onClick={() => sendMessage(false)} disabled={!inputMsg.trim() || gameStatus === 'idle'} className="btn-secondary px-3">
+                                    💬
+                                </button>
+                            </div>
+                            {gameStatus === 'active' && (
+                                <button
+                                    onClick={() => sendMessage(true)}
+                                    disabled={!inputMsg.trim() || !isMyTurn || isScoring}
+                                    className="btn-primary w-full text-sm"
+                                >
+                                    {!isMyTurn ? "⏸ Opponent's Turn" : isScoring ? '🤖 AI Scoring...' : '⚔️ Submit as Argument'}
+                                </button>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* Side panel */}
@@ -443,14 +484,35 @@ export default function GameRoomPage() {
                         </div>
                     </div>
 
+                    {/* Audience Voting (spectators only) */}
+                    {isSpectator && gameStatus === 'active' && (
+                        <AudienceVoting
+                            roomId={roomId}
+                            players={players}
+                            currentRound={currentRound}
+                            isSpectator={isSpectator}
+                        />
+                    )}
+
+                    {/* Spectator count */}
+                    {spectators.length > 0 && (
+                        <div className="card text-center">
+                            <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Spectators</p>
+                            <p className="text-lg font-bold text-brand-400">👁️ {spectators.length}</p>
+                        </div>
+                    )}
+
                     {/* Next round button (host only) */}
-                    {gameStatus === 'active' && currentRound < maxRounds && (
+                    {!isSpectator && gameStatus === 'active' && currentRound < maxRounds && (
                         <button onClick={handleNextRound} className="btn-secondary text-sm">
                             Next Round →
                         </button>
                     )}
                 </div>
             </div>
+
+            {/* Floating reaction renderer */}
+            <ReactionRenderer roomId={roomId} />
         </div>
     );
 }
