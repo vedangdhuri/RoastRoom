@@ -1,0 +1,458 @@
+# Instincts generated from https://github.com/vedangdhuri/RoastRoom
+# Generated: 2026-04-04T15:05:31.804Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: RoastRoom-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/vedangdhuri/RoastRoom
+---
+
+# RoastRoom Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: feat, chore
+
+## Evidence
+
+- 6 commits analyzed
+- Detected conventional commit pattern
+- Examples: chore: upgrade project to Next.js 16.2.2 and React 19.2.4, feat: add real-time floating reaction system for spectators
+
+---
+id: RoastRoom-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/vedangdhuri/RoastRoom
+---
+
+# RoastRoom Commit Length
+
+## Action
+
+Write moderate-length commit messages (~65 characters)
+
+## Evidence
+
+- Average commit message length: 65 chars
+- Based on 6 commits
+
+---
+id: RoastRoom-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/vedangdhuri/RoastRoom
+---
+
+# RoastRoom Naming Files
+
+## Action
+
+Use camelCase naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: camelCase
+
+---
+id: RoastRoom-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/vedangdhuri/RoastRoom
+---
+
+# RoastRoom Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: RoastRoom-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/vedangdhuri/RoastRoom
+---
+
+# RoastRoom Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: RoastRoom-workflow-feature-development
+trigger: "when implementing a new feature"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/vedangdhuri/RoastRoom
+---
+
+# RoastRoom Workflow Feature Development
+
+## Action
+
+Follow the feature-development workflow:
+1. Add feature implementation
+2. Add tests for feature
+3. Update documentation
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~25x per month
+- Files: app/components/*, **/*.test.*
+
+---
+id: RoastRoom-workflow-feature-development-with-component-and-integration
+trigger: "when doing feature development with component and integration"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/vedangdhuri/RoastRoom
+---
+
+# RoastRoom Workflow Feature Development With Component And Integration
+
+## Action
+
+Follow the feature-development-with-component-and-integration workflow:
+1. Create a new component file in app/components/ (e.g., ReactionRenderer.jsx, AudienceVoting.jsx, HighlightExport.jsx)
+2. Integrate the new component into a main page (e.g., app/room/[roomId]/page.jsx)
+3. Update shared state or services if needed (e.g., app/store/gameStore.js, app/services/roomService.js)
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: app/components/*.jsx, app/room/[roomId]/page.jsx, app/store/gameStore.js
+
+---
+id: RoastRoom-workflow-feature-bundle-with-e2e-and-ui-integration
+trigger: "when doing feature bundle with e2e and ui integration"
+confidence: 0.55
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/vedangdhuri/RoastRoom
+---
+
+# RoastRoom Workflow Feature Bundle With E2e And Ui Integration
+
+## Action
+
+Follow the feature-bundle-with-e2e-and-ui-integration workflow:
+1. Update or create multiple component files in app/components/
+2. Integrate components into various pages (e.g., app/room/[roomId]/page.jsx, app/dashboard/page.jsx, etc.)
+3. Update shared state/services (e.g., app/store/gameStore.js, app/services/roomService.js)
+4. Add or update end-to-end tests (e.g., e2e/spectator.spec.js)
+5. Update configuration or test result files as needed
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~1x per month
+- Files: app/components/*.jsx, app/*/page.jsx, app/store/gameStore.js
+
+---
+id: RoastRoom-workflow-dependency-upgrade
+trigger: "when doing dependency upgrade"
+confidence: 0.55
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/vedangdhuri/RoastRoom
+---
+
+# RoastRoom Workflow Dependency Upgrade
+
+## Action
+
+Follow the dependency-upgrade workflow:
+1. Update package.json with new dependency versions
+2. Update package-lock.json to lock new versions
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~1x per month
+- Files: package.json, package-lock.json
+
+---
+id: roastroom-instinct-file-naming-camelcase
+trigger: "When creating a new file (component, utility, etc.) in the codebase"
+confidence: 0.85
+domain: code-style
+source: repo-analysis
+source_repo: vedangdhuri/RoastRoom
+---
+
+# Roastroom Instinct File Naming Camelcase
+
+## Action
+
+Name the file using camelCase (e.g., reactionRenderer.jsx, audienceVoting.jsx)
+
+## Evidence
+
+- Pattern in namingConventions.files
+- Files like app/components/ReactionRenderer.jsx
+
+---
+id: roastroom-instinct-function-naming-camelcase
+trigger: "When defining a new function"
+confidence: 0.85
+domain: code-style
+source: repo-analysis
+source_repo: vedangdhuri/RoastRoom
+---
+
+# Roastroom Instinct Function Naming Camelcase
+
+## Action
+
+Name the function using camelCase (e.g., renderReactions, updateLeaderboard)
+
+## Evidence
+
+- Pattern in namingConventions.functions
+
+---
+id: roastroom-instinct-class-naming-pascalcase
+trigger: "When defining a new class"
+confidence: 0.85
+domain: code-style
+source: repo-analysis
+source_repo: vedangdhuri/RoastRoom
+---
+
+# Roastroom Instinct Class Naming Pascalcase
+
+## Action
+
+Name the class using PascalCase (e.g., ReactionRenderer, AudienceVoting)
+
+## Evidence
+
+- Pattern in namingConventions.classes
+
+---
+id: roastroom-instinct-constant-naming-screaming-snake
+trigger: "When defining a constant value"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: vedangdhuri/RoastRoom
+---
+
+# Roastroom Instinct Constant Naming Screaming Snake
+
+## Action
+
+Name the constant using SCREAMING_SNAKE_CASE (e.g., MAX_REACTIONS, VOTE_TIMEOUT)
+
+## Evidence
+
+- Pattern in namingConventions.constants
+
+---
+id: roastroom-instinct-import-relative
+trigger: "When importing modules within the codebase"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: vedangdhuri/RoastRoom
+---
+
+# Roastroom Instinct Import Relative
+
+## Action
+
+Use relative import paths (e.g., import X from '../utils/X')
+
+## Evidence
+
+- Pattern in importStyle: relative
+
+---
+id: roastroom-instinct-export-named
+trigger: "When exporting functions, classes, or components"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: vedangdhuri/RoastRoom
+---
+
+# Roastroom Instinct Export Named
+
+## Action
+
+Use named exports (e.g., export function X, export class Y)
+
+## Evidence
+
+- Pattern in exportStyle: named
+
+---
+id: roastroom-instinct-test-location-mixed
+trigger: "When adding tests for a feature or component"
+confidence: 0.75
+domain: testing
+source: repo-analysis
+source_repo: vedangdhuri/RoastRoom
+---
+
+# Roastroom Instinct Test Location Mixed
+
+## Action
+
+Place test files either alongside the implementation or in dedicated folders (e.g., e2e/, test-results/)
+
+## Evidence
+
+- architecture.folderStructure.testLocation: mixed
+- Presence of e2e/ and test-results/ folders
+
+---
+id: roastroom-instinct-test-feature-after-implementation
+trigger: "When implementing a new feature"
+confidence: 0.85
+domain: testing
+source: repo-analysis
+source_repo: vedangdhuri/RoastRoom
+---
+
+# Roastroom Instinct Test Feature After Implementation
+
+## Action
+
+Add corresponding test files (e.g., *.test.js or e2e/*.spec.js) after feature implementation
+
+## Evidence
+
+- feature-development.commitSequence includes 'Add tests for feature'
+- Files like e2e/spectator.spec.js
+
+---
+id: roastroom-instinct-git-conventional-commits
+trigger: "When writing a commit message"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: vedangdhuri/RoastRoom
+---
+
+# Roastroom Instinct Git Conventional Commits
+
+## Action
+
+Use conventional commit prefixes (e.g., feat, chore) followed by a concise description
+
+## Evidence
+
+- commits.type: conventional
+- Examples: 'feat: add real-time floating reaction system for spectators'
+
+---
+id: roastroom-instinct-git-commit-length
+trigger: "When composing a commit message"
+confidence: 0.8
+domain: git
+source: repo-analysis
+source_repo: vedangdhuri/RoastRoom
+---
+
+# Roastroom Instinct Git Commit Length
+
+## Action
+
+Keep the commit message concise, averaging around 65 characters
+
+## Evidence
+
+- commits.averageLength: 65
+
+---
+id: roastroom-instinct-feature-component-workflow
+trigger: "When adding a new interactive feature for spectators or users"
+confidence: 0.9
+domain: workflow
+source: repo-analysis
+source_repo: vedangdhuri/RoastRoom
+---
+
+# Roastroom Instinct Feature Component Workflow
+
+## Action
+
+Create a new component in app/components/, integrate it into a main page, and update shared state/services if needed
+
+## Evidence
+
+- feature-development-with-component-and-integration workflow
+- Example files: app/components/ReactionRenderer.jsx, app/room/[roomId]/page.jsx
+
+---
+id: roastroom-instinct-feature-bundle-workflow
+trigger: "When releasing a set of related features in one update"
+confidence: 0.88
+domain: workflow
+source: repo-analysis
+source_repo: vedangdhuri/RoastRoom
+---
+
+# Roastroom Instinct Feature Bundle Workflow
+
+## Action
+
+Update or create multiple components, integrate them across pages, update shared state/services, add end-to-end tests, and update config/test result files
+
+## Evidence
+
+- feature-bundle-with-e2e-and-ui-integration workflow
+- Example files: app/components/*.jsx, e2e/*.spec.js
+
+---
+id: roastroom-instinct-dependency-upgrade-workflow
+trigger: "When updating project dependencies to newer versions"
+confidence: 0.95
+domain: workflow
+source: repo-analysis
+source_repo: vedangdhuri/RoastRoom
+---
+
+# Roastroom Instinct Dependency Upgrade Workflow
+
+## Action
+
+Update package.json and package-lock.json with new dependency versions
+
+## Evidence
+
+- dependency-upgrade workflow
+- Commits like 'chore: upgrade project to Next.js 16.2.2 and React 19.2.4'
+
