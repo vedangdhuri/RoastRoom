@@ -44,12 +44,24 @@ export const useGameStore = create((set) => ({
 
   setIsScoring: (val) => set({ isScoring: val }),
 
-  setMatchResult: ({ winner, finalScores }) =>
+  setMatchResult: ({
+    winner,
+    finalScores,
+    crowdWinner,
+    peoplesChamp,
+    totalReactions,
+  }) =>
     set({
       winner,
       finalScores,
       gameStatus: "finished",
-      matchResult: { winner, finalScores },
+      matchResult: {
+        winner,
+        finalScores,
+        crowdWinner,
+        peoplesChamp,
+        totalReactions,
+      },
     }),
 
   resetGame: () =>
