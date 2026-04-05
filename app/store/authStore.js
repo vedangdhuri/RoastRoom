@@ -53,13 +53,34 @@ export const useAuthStore = create(
     // Fetch user profile from Supabase users table
     fetchProfile: async (userId) => {
       try {
-        const { data, error } = await supabase
+        let { data, error } = await supabase
           .from('users')
           .select('*')
           .eq('id', userId)
           .single();
 
-        if (error) throw error;
+        // Row doesn't exist yet — create a fallback profile
+        if (error && error.code === 'PGRST116') {
+          const { data: { user } } = await supabase.auth.getUser();
+          const fallbackUsername =
+            user?.user_metadata?.username ||
+            user?.email?.split('@')[0] ||
+            'Roaster';
+          const { data: upserted, error: upsertErr } = await supabase
+            .from('users')
+            .upsert({
+              id: userId,
+              username: fallbackUsername,
+              email: user?.email,
+            })
+            .select()
+            .single();
+          if (upsertErr) throw upsertErr;
+          data = upserted;
+        } else if (error) {
+          throw error;
+        }
+
         set((state) => {
           state.profile = data;
         });
@@ -79,9 +100,9 @@ export const useAuthStore = create(
         });
         if (error) throw error;
 
-        // Insert into public users table
+        // Upsert into public users table (trigger may have already created the row)
         if (data.user) {
-          await supabase.from('users').insert({
+          await supabase.from('users').upsert({
             id: data.user.id,
             username,
             email,
