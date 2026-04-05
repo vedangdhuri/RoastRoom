@@ -1,128 +1,49 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import toast from "react-hot-toast";
-import { authService } from "../services/authService";
+import RegisterForm from "../components/auth/RegisterForm";
 
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (formData.password.length < 6) {
-      return toast.error("Password must be at least 6 characters");
-    }
-
-    setLoading(true);
-    try {
-      await authService.register(formData);
-      toast.success("Account created! Welcome to RoastRoom ⚔️");
-      router.push("/dashboard");
-    } catch (error) {
-      toast.error(
-        error.response?.data?.errors?.[0]?.msg ||
-          error.response?.data?.message ||
-          "Registration failed",
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="min-h-[calc(100vh-64px)] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
+      {/* Background glows */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute top-1/3 right-1/4 w-[400px] h-[400px] bg-accent-orange/8 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/3 left-1/4 w-[300px] h-[300px] bg-brand-700/10 rounded-full blur-[100px]" />
+      </div>
+
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        className="sm:mx-auto sm:w-full sm:max-w-md"
+        transition={{ duration: 0.5 }}
+        className="relative z-10 w-full max-w-md"
       >
+        {/* Header */}
         <div className="text-center mb-8">
-          <span className="text-5xl mb-4 block">⚔️</span>
-          <h2 className="font-display font-bold text-3xl">Join the Arena</h2>
-          <p className="mt-2 text-sm text-gray-400">
-            Already have an account?{" "}
-            <Link
-              href="/login"
-              className="font-semibold text-brand-400 hover:text-brand-300"
-            >
-              Sign in
-            </Link>
+          <div className="inline-flex w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-orange to-brand-600 items-center justify-center text-2xl mb-5 shadow-lg shadow-accent-orange/20">
+            🔥
+          </div>
+          <h1 className="font-display font-bold text-3xl mb-2">Join the Arena</h1>
+          <p className="text-gray-500 text-sm">
+            Create your account and start battling
           </p>
         </div>
 
-        <div className="card">
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
-                Username
-              </label>
-              <input
-                type="text"
-                required
-                className="input"
-                value={formData.username}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    username: e.target.value.toLowerCase().replace(/\s/g, ""),
-                  })
-                }
-                placeholder="roastmaster99"
-                minLength={3}
-                maxLength={20}
-              />
-            </div>
+        <div className="card-glass p-8">
+          <RegisterForm />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
-                Email address
-              </label>
-              <input
-                type="email"
-                required
-                className="input"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                placeholder="you@example.com"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                required
-                className="input"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                placeholder="••••••••"
-                minLength={6}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full shadow-lg shadow-brand-500/20"
-            >
-              {loading ? "Forging Profile..." : "Create Account"}
-            </button>
-          </form>
+          <div className="mt-6 pt-5 border-t border-white/[0.04] text-center">
+            <p className="text-sm text-gray-500">
+              Already have an account?{" "}
+              <Link
+                href="/login"
+                className="text-brand-400 hover:text-brand-300 font-medium transition-colors"
+              >
+                Sign In
+              </Link>
+            </p>
+          </div>
         </div>
       </motion.div>
     </div>

@@ -9,9 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.101.1",
     "axios": "^1.7.2",
+    "firebase": "^12.11.0",
     "framer-motion": "^11.2.10",
     "html-to-image": "^1.11.13",
+    "immer": "^11.1.4",
     "next": "^16.2.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",

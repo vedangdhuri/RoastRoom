@@ -1,143 +1,142 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { roomService } from "../services/roomService";
-import toast from "react-hot-toast";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { useRoom } from "../hooks/useRoom";
+import { useAuth } from "../hooks/useAuth";
+import RoomCard from "../components/room/RoomCard";
+import CreateRoomModal from "../components/room/CreateRoomModal";
+import Button from "../components/ui/Button";
 
-const LobbyPage = () => {
-  const [rooms, setRooms] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+const container = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1, transition: { staggerChildren: 0.06 } },
+};
+const item = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+};
 
-  const fetchRooms = () => {
-    setLoading(true);
-    roomService
-      .getRooms()
-      .then(setRooms)
-      .catch(() => toast.error("Failed to load rooms"))
-      .finally(() => setLoading(false));
-  };
+const MODES = ["all", "debate", "roast"];
+const STATUSES = ["all", "waiting", "active", "finished"];
 
-  useEffect(() => {
-    fetchRooms();
-    const interval = setInterval(fetchRooms, 10000); // Auto-refresh every 10s
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleJoin = (roomId) => {
-    router.push(`/room/${roomId}`);
-  };
+export default function LobbyPage() {
+  const { rooms, loading, filter, setFilter, refresh } = useRoom();
+  const { isAuthenticated } = useAuth();
+  const [showCreate, setShowCreate] = useState(false);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="font-display font-bold text-4xl mb-2">
-            The Arena Lobby
+          <h1 className="font-display font-bold text-3xl md:text-4xl tracking-tight">
+            Battle Lobby
           </h1>
-          <p className="text-gray-400">
-            Find a match or create your own room to start battling.
+          <p className="text-gray-500 text-sm mt-1">
+            {rooms.length} room{rooms.length !== 1 ? "s" : ""} available
           </p>
         </div>
-        <div className="flex gap-3">
-          <button
-            onClick={fetchRooms}
-            className="btn-secondary"
-            title="Refresh list"
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={refresh}
+            className="text-gray-500"
           >
-            ↻
-          </button>
-          <Link href="/create-room" className="btn-primary glow-red">
-            + Create Room
-          </Link>
+            ↻ Refresh
+          </Button>
+          {isAuthenticated && (
+            <Button
+              id="create-room-btn"
+              variant="primary"
+              size="md"
+              onClick={() => setShowCreate(true)}
+            >
+              + Create Room
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-3 mb-8">
+        {/* Mode filter */}
+        <div className="flex items-center gap-1 p-1 bg-dark-400 rounded-xl">
+          {MODES.map((m) => (
+            <button
+              key={m}
+              onClick={() => setFilter({ mode: m })}
+              className={[
+                "px-3 py-1.5 rounded-lg text-xs font-label font-semibold uppercase tracking-wider transition-all",
+                filter.mode === m
+                  ? m === "debate"
+                    ? "bg-accent-blue/15 text-accent-blue"
+                    : m === "roast"
+                    ? "bg-accent-orange/15 text-accent-orange"
+                    : "bg-white/[0.08] text-white"
+                  : "text-gray-500 hover:text-gray-300",
+              ].join(" ")}
+            >
+              {m === "debate" ? "⚔️ " : m === "roast" ? "🔥 " : ""}
+              {m}
+            </button>
+          ))}
+        </div>
+
+        {/* Status filter */}
+        <div className="flex items-center gap-1 p-1 bg-dark-400 rounded-xl">
+          {STATUSES.map((s) => (
+            <button
+              key={s}
+              onClick={() => setFilter({ status: s })}
+              className={[
+                "px-3 py-1.5 rounded-lg text-xs font-label font-semibold uppercase tracking-wider transition-all",
+                filter.status === s
+                  ? "bg-white/[0.08] text-white"
+                  : "text-gray-500 hover:text-gray-300",
+              ].join(" ")}
+            >
+              {s}
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Room Grid */}
-      {loading && rooms.length === 0 ? (
-        <div className="flex justify-center py-20">
-          <div className="animate-spin text-4xl">⚔️</div>
+      {loading ? (
+        <div className="flex items-center justify-center py-24">
+          <div className="w-8 h-8 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : rooms.length === 0 ? (
-        <div className="card text-center py-20 border-dashed border-white/20">
-          <p className="text-5xl mb-4">👻</p>
-          <h3 className="font-display font-bold text-xl mb-2">
-            It's quiet in here...
-          </h3>
-          <p className="text-gray-400 mb-6">
-            No public rooms available right now.
+        <div className="text-center py-24">
+          <p className="text-5xl mb-4">🏟️</p>
+          <p className="font-display font-bold text-xl text-gray-500">
+            No rooms found
           </p>
-          <Link href="/create-room" className="btn-primary">
-            Be the first to host
-          </Link>
+          <p className="text-gray-600 text-sm mt-2">
+            {isAuthenticated
+              ? "Create the first battle room and wait for a challenger!"
+              : "Sign in to create a room."}
+          </p>
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {rooms.map((room) => {
-            const isFull = room.players.length >= 2;
-            const isFinished = room.status === "finished";
-
-            return (
-              <div
-                key={room.roomId}
-                className="card flex flex-col hover:-translate-y-1 hover:border-brand-500/30 transition-all duration-300"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex gap-2">
-                    <span
-                      className={`badge ${room.mode === "roast" ? "bg-orange-900/40 text-orange-400" : "bg-blue-900/40 text-blue-400"}`}
-                    >
-                      {room.mode === "roast" ? "🔥 Roast" : "🎓 Debate"}
-                    </span>
-                    <span className="badge bg-surface-100 text-gray-300">
-                      {room.players.length}/2
-                    </span>
-                  </div>
-                  {isFinished && (
-                    <span className="text-xs text-red-400 font-semibold uppercase">
-                      Ended
-                    </span>
-                  )}
-                  {room.status === "active" && (
-                    <span className="text-xs text-brand-400 font-semibold uppercase animate-pulse">
-                      Live
-                    </span>
-                  )}
-                </div>
-
-                <h3 className="font-display font-bold text-lg mb-1 truncate">
-                  {room.name}
-                </h3>
-                <p className="text-sm text-gray-400 mb-6 line-clamp-2 flex-1">
-                  <span className="font-semibold text-gray-300">Topic:</span>{" "}
-                  {room.topic}
-                </p>
-
-                <button
-                  onClick={() => handleJoin(room.roomId)}
-                  disabled={isFull && room.status !== "active"}
-                  className={`w-full py-2.5 rounded-lg font-semibold text-sm transition-colors ${
-                    isFull
-                      ? "bg-surface-100 hover:bg-surface-200 text-gray-300"
-                      : "bg-brand-600/20 hover:bg-brand-600 text-brand-400 hover:text-white border border-brand-500/30"
-                  }`}
-                >
-                  {isFinished
-                    ? "View Results"
-                    : isFull
-                      ? "Spectate"
-                      : "Join Match"}
-                </button>
-              </div>
-            );
-          })}
-        </div>
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"
+        >
+          {rooms.map((room) => (
+            <motion.div key={room.id} variants={item}>
+              <RoomCard room={room} />
+            </motion.div>
+          ))}
+        </motion.div>
       )}
+
+      <CreateRoomModal isOpen={showCreate} onClose={() => setShowCreate(false)} />
     </div>
   );
-};
-
-export default LobbyPage;
+}

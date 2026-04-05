@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: is user authenticated?
+    function isAuthed() {
+      return request.auth != null;
+    }
+
+    // Helper: is the requesting user a participant in the room?
+    function isParticipant(roomId) {
+      return isAuthed() &&
+        exists(/databases/$(database)/documents/rooms/$(roomId)/presence/$(request.auth.uid));
+    }
+
+    match /rooms/{roomId} {
+
+      // ── Messages ──────────────────────────────────────────────────
+      match /messages/{messageId} {
+        // Authenticated users in the room can read messages
+        allow read: if isParticipant(roomId);
+        // Only write your own messages (userId must match auth uid)
+        allow create: if isAuthed()
+          && request.resource.data.userId == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() >= 1
+          && request.resource.data.text.size() <= 500;
+        // Score preview updates are allowed (Edge Function uses Admin SDK; client limited)
+        allow update: if isAuthed()
+          && resource.data.userId == request.auth.uid;
+      }
+
+      // ── Presence ──────────────────────────────────────────────────
+      match /presence/{userId} {
+        // Anyone authenticated can read presence to see who's online
+        allow read: if isAuthed();
+        // Users can only write their own presence document
+        allow write: if isAuthed() && request.auth.uid == userId;
+      }
+
+      // ── Typing Indicators ─────────────────────────────────────────
+      match /typing/{userId} {
+        // Room participants can read typing indicators
+        allow read: if isParticipant(roomId);
+        // Users can only write their own typing document
+        allow write: if isAuthed() && request.auth.uid == userId;
+      }
+    }
+  }
+}
