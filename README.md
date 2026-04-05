@@ -27,6 +27,7 @@ RoastRoom offers two distinct ways to dominate:
 
 - **⚔️ Debate Mode**: Focus on logic, evidence, and structured arguments. Perfect for testing your rhetorical skills and critical thinking.
 - **🔥 Roast Mode**: unleash your inner comedian. Score points for creativity, humor, and sheer disrespect (kept within the rules, of course!).
+- **👀 Spectator Mode**: Join live matches to watch the action unfold! React in real-time with floating emojis, cast your vote for the best arguments in each round, and generate shareable match highlight cards.
 
 ---
 
