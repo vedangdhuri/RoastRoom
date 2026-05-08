@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 
 const NAV_LINKS = [
   { href: "/lobby", label: "Arena", icon: "⚔️" },
+  { href: "/arenas", label: "Arenas", icon: "🏟️" },
   { href: "/leaderboard", label: "Leaderboard", icon: "🏆" },
   { href: "/dashboard", label: "Profile", icon: "👤" },
 ];
